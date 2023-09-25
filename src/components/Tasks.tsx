@@ -3,7 +3,7 @@ import { useState } from "react"
 import AddTodo from "./AddTodo"
 import TaskList from "./TaskList"
 
-interface Tasks {
+export interface Tasks {
   id: number
   text: string,
   isChecked: boolean
