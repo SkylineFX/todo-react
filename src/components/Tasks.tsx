@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 import AddTodo from "./AddTodo"
 import TaskList from "./TaskList"
@@ -9,11 +9,20 @@ export interface TaskProps {
   isChecked: boolean
 }
 
-const initialTasks: TaskProps[] = []
 let nextId: number = 0
-
 export default function Tasks() {
-  const [tasks, setTasks] = useState(initialTasks)
+  const [tasks, setTasks] = useState(Array<TaskProps>)
+
+  useEffect(() => {
+    const items = JSON.parse(localStorage.getItem('tasks')!);
+    if (items) {
+     setTasks(items);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }, [tasks]);
 
   function handleAddTodo(text: string, isChecked: boolean) {
     if(text) setTasks([...tasks, {id: nextId++, text: text, isChecked: isChecked}])
@@ -30,7 +39,6 @@ export default function Tasks() {
       return task
     }))
   }
-
 
   return (
     <div className="w-full flex flex-col items-center gap-10">
