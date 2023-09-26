@@ -1,10 +1,14 @@
 import { useState } from 'react'
 
+import { TaskProps } from './Tasks'
+import deleteIcon from '../assets/deleteIcon.svg'
+import saveIcon from '../assets/saveIcon.svg'
+
 export default function TaskList({tasks, onDeleteTodo, onEditTodo}: any) {
   return (
-    <div className="w-fit flex flex-col gap-5">
-      {tasks.map((item): any => 
-        <Task key={item.id} task={item} onDelete={onDeleteTodo} onEdit={onEditTodo}/>
+    <div className="w-full flex flex-col items-center gap-4">
+      {tasks.map((task: TaskProps) => 
+        <Task key={task.id} task={task} onDelete={onDeleteTodo} onEdit={onEditTodo}/>
       )}
   </div>
   )
@@ -14,23 +18,29 @@ function Task({task, onDelete, onEdit}: any) {
   const [isEditing, setIsEditing] = useState(false)
 
   return (
-    <div key={task.id}
-      className='flex gap-6 items-center'>
-      <input type="checkbox" checked={task.isChecked} onChange={(e) => onEdit(e.target.checked, task.id, task.text)}
-        className='w-7 h-7'/>
+    <div key={task.id} className='flex items-center justify-center w-full max-w-4xl text-slate-200'>
+      <div className={`${isEditing ? 'bg-[#434c5e]' : 'bg-[#3b4252]'} flex items-center justify-center  h-10 w-10 rounded-l-md`}>
+        <input type="checkbox" checked={task.isChecked} onChange={(e) => onEdit(task.id, task.text, e.target.checked)}
+          className='h-[16px] aspect-square appearance-none select-none cursor-pointer rounded-full outline outline-2 outline-[#a3be8c] transition-all duration-300  checked:bg-[#a3be8c] dark:checked:outline-none'/>
+      </div>
+        
       {isEditing ? 
-        <input type="text" value={task.text} onChange={(e) => onEdit(task.isChecked, task.id, e.target.value)}
-          className=' indent-2 outline-none w-48 bg-slate-300 py-1'/> :
-        <div className=' bg-slate-200 w-48 px-2 flex items-center py-1'>{task.text}</div>
+        <form onSubmit={e => {e.preventDefault(), setIsEditing(false)}} className='basis-8/12 w-4/5'>
+          <input type="text" value={task.text} autoFocus onChange={(e) => onEdit(task.id, e.target.value, task.isChecked)}
+          className='indent-2 outline-none bg-[#434c5e] h-10 w-full'/>
+        </form> :
+        <div onDoubleClick={() => setIsEditing(true)} className='basis-8/12 bg-[#3b4252] h-10 px-2 flex items-center py-1 w-4/5 truncate select-none'>{task.text}</div>
       }
-      <button onClick={() => setIsEditing(isEditing => !isEditing)}
-        className='px-6 py-1 bg-[#434371] text-white rounded-md'>
-        {isEditing ? 'Save' : 'Edit'}
-      </button>
-      <button onClick={() => onDelete(task.id)}
-        className='px-6 py-1 bg-[#434371] text-white rounded-md'>
-          Delete
-      </button>
+
+      <div className={`${isEditing ? 'bg-[#434c5e]' : 'bg-[#3b4252]'} flex flex-col items-center justify-center gap-1 rounded-r-md w-10 h-10`}>
+        <button className=''>
+          {!isEditing ? 
+            <img src={deleteIcon} alt="" className='w-6 h-6' onClick={() => onDelete(task.id)} /> : 
+            <img src={saveIcon} alt="" className='w-6 h-6' onClick={() => setIsEditing(false)} />
+          }
+        </button>
+      </div>
+
     </div>
   )
 }
